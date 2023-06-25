@@ -1,0 +1,4 @@
+apps/worker/cache
+bin
+*.db
+apps/worker/cookies.json
