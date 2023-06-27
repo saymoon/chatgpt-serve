@@ -128,7 +128,7 @@ func getPendingTask() (Task, error) {
 func processTask(task Task) (Update, error) {
 	var conversationId, reply string
 	// page, err := helper.GetPageByModel(task.InstanceId, task.ConversationId, task.Model)
-    page, err := helper.GetPage(task.InstanceId, task.ConversationId, true)
+	page, err := helper.GetPage(task.InstanceId, task.ConversationId, true)
 	if err != nil {
 		return Update{
 			ID:           task.ID,
@@ -142,12 +142,17 @@ func processTask(task Task) (Update, error) {
 				ID:           task.ID,
 				Status:       "error",
 				ErrorMessage: err.Error(),
-			}, err
+			}, nil
 		} else {
 			if strings.TrimSpace(reply) == "" {
 				log.Printf("openai response error: %v", err)
 				// 刷新页面
 				helper.ClosePage(task.ConversationId, page)
+				return Update{
+					ID:           task.ID,
+					Status:       "error",
+					ErrorMessage: "openai response error",
+				}, nil
 			}
 		}
 	}
@@ -183,4 +188,3 @@ func updateTask(update Update) error {
 
 	return nil
 }
-
